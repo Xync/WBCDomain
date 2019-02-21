@@ -34,8 +34,10 @@ There is a firewall rule to restrict access to the environment to a specific IP.
 
 ## Build your environment
   * From the project directory run
-      terraform init
-      terraform apply
+  ```
+    terraform init
+    terraform apply
+  ```
   * Wait ~15 minutes.  The Kali box will be up sooner, but the windows machines really take this long to set up and reboot a couple times.
 
 ## Environment Contents
@@ -66,4 +68,6 @@ Obviously the goal is to reveal these passwords using various techniques, but yo
 
 ## Destroy your environment
 When you are done with your environment, destroy the resources so you don't get charged.
+```
     terraform destroy
+```
