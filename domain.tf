@@ -12,6 +12,7 @@ resource "aws_vpc" "wbc_vpc" {
 resource "aws_subnet" "wbc_subnet" {
   vpc_id = "${aws_vpc.wbc_vpc.id}"
   cidr_block = "10.1.0.0/24"
+  availability_zone = "us-west-2c"
 }
 # Internet Gateway required to allow members of the VPC to get to the Internet
 resource "aws_internet_gateway" "wbc_gw" {
@@ -33,7 +34,7 @@ resource "aws_security_group" "wbc_sg"{
     to_port = 0
     protocol = "-1"
     # Allow inbound traffic from your IP here
-    cidr_blocks = ["71.237.118.185/32"]
+    cidr_blocks = ["1.1.1.1/32"]
   }
   # Ingress from anywhere on the internal subnet
   ingress {
@@ -84,7 +85,6 @@ resource "aws_instance" "pdc" {
   # Set up a scheduled task to complete the configuration
   user_data = <<-EOF
     <powershell>
-    #echo "User Data Started" | Out-File -filepath C:\Users\Administrator\log.txt
     # Install Active Directory Powershell Tools
     Add-windowsfeature AD-Domain-Services -IncludeManagementTools
     # Create User Creation Script (Step 2)
@@ -103,7 +103,6 @@ echo @'
   Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\winlogon"  -Name DefaultPassword -Force | Out-Null
   SCHTASKS.EXE /DELETE /F /TN "Step2"
   del C:\Users\Administrator\addusers.ps1
-  echo "Calling Reboot 2" | Out-File -filepath C:\Users\Administrator\log.txt -append
   Restart-Computer -Force
 '@ | Out-File -filepath C:\Users\Administrator\addusers.ps1
 
@@ -128,12 +127,10 @@ echo @'
 # Add a dependency on this resource to Windows domain members
 resource "null_resource" "pdc_reboot_time" {
   provisioner "local-exec" {
-    # For UNIX based hosts
-    #command = "sleep 60"
-    # For Windows based hosts
-    # Don't know why this complains about output redirection
-    #command = "timeout 60"
     command = "echo 'Waiting seven minutes for PDC to initialize'"
+    # For UNIX based hosts
+    #command = "sleep 420"
+    # For Windows based hosts
     command = "ping -n 420 127.0.0.1 > nul"
   }
   # Start counting after PDC thinks it's available

@@ -1,0 +1,4 @@
+AWSCreds
+*.pem
+.terraform
+terraform.tfstate*
