@@ -33,7 +33,7 @@ resource "aws_security_group" "wbc_sg"{
     to_port = 0
     protocol = "-1"
     # Allow inbound traffic from your IP here
-    cidr_blocks = ["1.1.1.1/32"]
+    cidr_blocks = ["71.237.118.185/32"]
   }
   # Ingress from anywhere on the internal subnet
   ingress {
