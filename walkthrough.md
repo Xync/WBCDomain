@@ -115,4 +115,5 @@ set DailyTime 23:40
 ## Test reboot persistence
 ```
 #Using the remote desktop connection, reboot the PDC.
+test
 ```
